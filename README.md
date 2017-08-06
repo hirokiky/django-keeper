@@ -66,11 +66,8 @@ def add_comment(request, issue_id):
 ### Additional Principals
 
 ```python
-from keeper.security import root_principals
-
-
 def myapp_principals(request):
-    principals = root_principals(request)
+    principals = set()
 
     if request.user.is_authenticated:
         principals.add(request.user.team)
@@ -80,7 +77,10 @@ def myapp_principals(request):
 ```
 
 ```python
-KEEPER_PRINCIPALS_CALLBACK = 'myapp.security.myapp_principals'
+KEEPER_PRINCIPALS_CALLBACKS = [
+    'keeper.security.root_principals',
+    'myapp.security.myapp_principals',
+]
 ```
 
 Use added prencipal in `__acl__`

@@ -30,13 +30,16 @@ def root_principals(request):
     return principals
 
 
-def get_principals_callback():
-    path = getattr(settings, 'KEEPER_PRINCIPALS_CALLBACK', None)
-    if path:
-        module, func = path.rsplit('.', 1)
-        return getattr(import_module(module), func)
+def get_principals_callbacks():
+    paths = getattr(settings, 'KEEPER_PRINCIPALS_CALLBACKS', None)
+    if paths:
+        funcs = []
+        for path in paths:
+            module, func = path.rsplit('.', 1)
+            funcs.append(getattr(import_module(module), func))
+        return funcs
     else:
-        return root_principals
+        return [root_principals]
 
 
 def detect_permissions(context, principals):
@@ -59,7 +62,9 @@ def detect_permissions(context, principals):
 
 
 def has_permission(permission, context, request):
-    callback = get_principals_callback()
-    principals = callback(request)
+    callbacks = get_principals_callbacks()
+    principals = set()
+    for c in callbacks:
+        principals |= c(request)
     permissions = detect_permissions(context, principals)
     return permission in permissions
