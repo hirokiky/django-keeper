@@ -1,41 +1,26 @@
 from functools import wraps
 
 from django.http import HttpResponseForbidden
+from django.shortcuts import get_object_or_404
 
-from .security import has_permission
-
-
-def keeper(factory, permission):
-    """
-    from keeper.security import Allow, Everyone
+from .security import has_permission, GlobalContext
 
 
-    class Post(models.Model):
-        @property
-        def __acl__(self):
-            return [
-                Allow, Everyone, 'view',
-                Allow, self.author, ('edit', 'delete'),
-            ]
-
-    from myapp.models import Post
-    from keeper.security import Staff
-
-
-    def post_factory(request, post_id):
-        return get_object_or_404(Post, id=post_id)
-
-
-    @keeper(post_factory, 'view')
-    def post_detail(request, post_id):
-        return HttpResponse()
-    """
-
+def keeper(permission,
+           model=None, mapper=None,
+           factory=None):
     def dec(f):
         @wraps(f)
         def _wrapped(request, *args, **kwargs):
-            context = factory(request, *args, **kwargs)
-            request.context = context
+            if model and mapper:
+                kwargs = mapper(request, *args, **kwargs)
+                context = get_object_or_404(model, **kwargs)
+            elif factory:
+                context = factory(request, *args, **kwargs)
+            else:
+                context = GlobalContext()
+
+            request.k_context = context
 
             if has_permission(permission, context, request):
                 return f(request, *args, **kwargs)

@@ -13,6 +13,11 @@ Authenticated = 'keeper.authenticated'
 Staff = 'keeper.staff'
 
 
+class GlobalContext:
+    def __acl__(self):
+        return settings.KEEPER_GLOBAL_ACL
+
+
 def root_principals(request):
     principals = set()
     principals.add(Everyone)
