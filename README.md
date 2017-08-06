@@ -63,6 +63,41 @@ def add_comment(request, issue_id):
 
 ```
 
+### Additional Principals
+
+```python
+from keeper.security import root_principals
+
+
+def myapp_principals(request):
+    principals = root_principals(request)
+
+    if request.user.is_authenticated:
+        principals.add(request.user.team)
+
+    return principals
+
+```
+
+```python
+KEEPER_PRINCIPALS_CALLBACK = 'myapp.security.myapp_principals'
+```
+
+Use added prencipal in `__acl__`
+
+```python
+class Project(models.Model):
+    team = models.ForeginKey('myapp.Team')
+    ...
+
+    def __acl__(self):
+        return [
+            (Allow, Everyone, 'view'),
+            (Allow, self.team, 'edit'),
+        ]
+
+```
+
 ## Alternative
 
 * [django-guardian](https://github.com/django-guardian/django-guardian)
