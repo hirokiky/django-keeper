@@ -1,1 +1,1 @@
-# django-acl-authz
+# django-keeper

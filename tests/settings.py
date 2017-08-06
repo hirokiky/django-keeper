@@ -3,7 +3,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'acl_authz',
+    'keeper',
 )
 DATABASES = {
     'default': {

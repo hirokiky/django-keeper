@@ -4,7 +4,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.test import TestCase, RequestFactory
 
 
-from acl_authz.security import (
+from keeper.security import (
     root_principals,
     detect_permissions,
     Allow,

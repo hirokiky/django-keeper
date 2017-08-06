@@ -8,9 +8,9 @@ Allow = 'allow'
 Deny = 'deny'
 
 # Principals
-Everyone = 'acl_authz.everyone'
-Authenticated = 'acl_authz.authenticated'
-Staff = 'acl_authz.staff'
+Everyone = 'keeper.everyone'
+Authenticated = 'keeper.authenticated'
+Staff = 'keeper.staff'
 
 
 def root_principals(request):

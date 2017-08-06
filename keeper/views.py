@@ -7,7 +7,7 @@ from .security import has_permission
 
 def authz(factory, permission):
     """
-    from acl_authz.security import Allow, Everyone
+    from keeper.security import Allow, Everyone
 
 
     class Post(models.Model):
@@ -19,7 +19,7 @@ def authz(factory, permission):
             ]
 
     from myapp.models import Post
-    from acl_authz.security import Staff
+    from keeper.security import Staff
 
 
     def post_factory(request, post_id):
