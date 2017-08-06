@@ -15,7 +15,7 @@ def authz(factory, permission):
         def __acl__(self):
             return [
                 Allow, Everyone, 'view',
-                Allow, self.author, 'edit',
+                Allow, self.author, ('edit', 'delete'),
             ]
 
     from myapp.models import Post

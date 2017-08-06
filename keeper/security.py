@@ -41,11 +41,15 @@ def detect_permissions(context, principals):
     permissions = set()
     acl = context.__acl__
     for action, principal, permission in acl:
+        if isinstance(permission, tuple):
+            p = set(permission)
+        else:
+            p = {permission}
         if principal in principals:
             if action is Allow:
-                permissions.add(permission)
+                permissions |= p
             elif action is Deny:
-                permissions.remove(permission)
+                permissions -= p
     return permissions
 
 
