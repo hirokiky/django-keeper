@@ -5,7 +5,7 @@ from django.http import HttpResponseForbidden
 from .security import has_permission
 
 
-def authz(factory, permission):
+def keeper(factory, permission):
     """
     from keeper.security import Allow, Everyone
 
@@ -26,7 +26,7 @@ def authz(factory, permission):
         return get_object_or_404(Post, id=post_id)
 
 
-    @authz(post_factory, 'view')
+    @keeper(post_factory, 'view')
     def post_detail(request, post_id):
         return HttpResponse()
     """

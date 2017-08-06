@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class AclAuthzConfig(AppConfig):
+class KeeperConfig(AppConfig):
     name = 'keeper'

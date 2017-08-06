@@ -26,7 +26,7 @@ def root_principals(request):
 
 
 def get_principals_callback():
-    path = getattr(settings, 'ACL_AUTHZ_PRINCIPALS_CALLBACK', None)
+    path = getattr(settings, 'KEEPER_PRINCIPALS_CALLBACK', None)
     if path:
         module, func = path.rsplit('.', 1)
         return getattr(import_module(module), func)
