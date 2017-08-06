@@ -50,14 +50,14 @@ def issue_list(request):
 
 
 # Model Permissions
-@keeper('view', Issue, lambda request, issue_id: {'id': issue_id}):
+@keeper('view', Issue, lambda request, issue_id: {'id': issue_id})
 def issue_detail(request, issue_id):
     request.k_context  # Will be instance of Issue model got by the lambda mapping.
     ...
 
 
 
-@keeper('add_comment', Issue, lambda request, issue_id: {'id': issue_id}):
+@keeper('add_comment', Issue, lambda request, issue_id: {'id': issue_id})
 def add_comment(request, issue_id):
     ...
 
