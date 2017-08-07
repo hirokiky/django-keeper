@@ -14,11 +14,18 @@ Authenticated = 'keeper.authenticated'
 Staff = 'keeper.staff'
 
 
-class GlobalContext:
-    def __acl__(self):
-        return settings.KEEPER_GLOBAL_ACL
+def import_module_inner(path):
+    module, func = path.rsplit('.', 1)
+    return getattr(import_module(module), func)
 
 
+try:
+    GlobalContext = import_module_inner(settings.KEEPER_GLOBAL_ACL)
+except AttributeError:
+    GlobalContext = None
+
+
+@lru_cache(maxsize=1)
 def root_principals(request):
     principals = set()
     principals.add(Everyone)
@@ -31,14 +38,12 @@ def root_principals(request):
     return principals
 
 
-@lru_cache(maxsize=1)
 def get_principals_callbacks():
     paths = getattr(settings, 'KEEPER_PRINCIPALS_CALLBACKS', None)
     if paths:
         funcs = []
         for path in paths:
-            module, func = path.rsplit('.', 1)
-            funcs.append(getattr(import_module(module), func))
+            funcs.append(import_module_inner(path))
         return funcs
     else:
         return [root_principals]

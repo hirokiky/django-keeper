@@ -31,10 +31,16 @@ class Issue(models.Model):
 Global permissions.
 
 ```python
-KEEPER_GLOBAL_ACL = [
-    (Allow, Authenticated, view_dashboard'),
-    (Allow, Authenticated, add_issue'),
-]
+class Root:
+    def __acl__(self):
+        return [
+            (Allow, Authenticated, 'view_dashboard'),
+            (Allow, Authenticated, 'add_issue'),
+        ]
+```
+
+```python
+KEEPER_GLOBAL_ACL = 'path.to.Root'
 ```
 
 Applying `keeper` for views.
