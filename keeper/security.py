@@ -1,4 +1,5 @@
 from importlib import import_module
+from functools import lru_cache
 
 from django.conf import settings
 
@@ -30,6 +31,7 @@ def root_principals(request):
     return principals
 
 
+@lru_cache(maxsize=1)
 def get_principals_callbacks():
     paths = getattr(settings, 'KEEPER_PRINCIPALS_CALLBACKS', None)
     if paths:
