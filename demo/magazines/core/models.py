@@ -9,7 +9,7 @@ ROLE_OWNER = 'OW'
 ROLE_MEMBER = 'ME'
 ROLE_CHOICES = (
     (ROLE_OWNER, 'Owner'),
-    (ROLE_MEMBER, 'ME'),
+    (ROLE_MEMBER, 'Member'),
 )
 
 
