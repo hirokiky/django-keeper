@@ -123,8 +123,8 @@ STATIC_URL = '/static/'
 
 # Keeper
 KEEPER_PRINCIPALS_CALLBACKS = [
-    'keeper.principals.root_principals',
+    'keeper.security.root_principals',
     'core.principals.magazines_principals',
 ]
 
-KEEPER_GLOBAL_ACL = 'core.models.Root'
+KEEPER_GLOBAL_CONTEXT = 'core.models.Root'
