@@ -1,4 +1,4 @@
-from keeper.views import keeper
+from keeper.views import keeper, login_required
 
 from core.models import Magazine, Article
 
@@ -23,16 +23,21 @@ def team_billing_resign(request):
     pass
 
 
-@keeper('list_magazines')
+@keeper('list_magazines',
+        on_fail=login_required())
 def dashboard(request):
     pass
 
 
-@keeper('read', Magazine, lambda r, mid: {'id': mid})
+@keeper('read',
+        model=Magazine,
+        mapper=lambda request, magazine_id: {'id': magazine_id})
 def magazine_detail(request, magazine_id):
     pass
 
 
-@keeper('read', Article, lambda r, aid: {'id': aid})
-def article_detail(request, article_id):
+@keeper('read',
+        model=Article,
+        mapper=lambda request, magazine_id, article_id: {'id': article_id})
+def article_detail(request, magazine_id, article_id):
     pass
