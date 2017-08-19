@@ -17,7 +17,6 @@ class Root:
     def __acl__(self):
         return [
             (Allow, Authenticated, 'list_magazines'),
-            (Allow, ('role', ROLE_OWNER), 'subscribe'),
         ]
 
 
@@ -26,12 +25,13 @@ class Team(models.Model):
 
     def __acl__(self):
         return [
-            (Allow, (self, ROLE_OWNER), ('edit', 'manage_member')),
+            (Allow, (self, ROLE_OWNER), ('view', 'manage',)),
+            (Allow, (self, ROLE_MEMBER), ('view',)),
         ]
 
 
 class User(AbstractUser):
-    team = models.ForeginKey(Team, related_name='members')
+    team = models.ForeignKey(Team, related_name='members')
     role = models.CharField(max_length=2, choices=ROLE_CHOICES)
 
     class Meta:
@@ -54,7 +54,7 @@ class Magazine(models.Model):
 
 
 class Article(models.Model):
-    magazine = models.ForeginKey(Magazine, related_name='articles')
+    magazine = models.ForeignKey(Magazine, related_name='articles')
 
     def __acl__(self):
         return self.magazine.__acl__()
@@ -65,14 +65,16 @@ class Plan(models.Model):
 
 
 class Subscription(models.Model):
-    plan = models.ForeginKey(Plan)
+    plan = models.ForeignKey(Plan)
     team = models.OneToOneField(Team, related_name='subscription')
 
     active_until = models.DateTimeField()
 
     def __acl__(self):
+        # Alternative implementation:
+        #     return self.team.__acl__()
         return [
-            (Allow, (self.team, ROLE_OWNER), ('extend', 'resign')),
+            (Allow, (self.team, ROLE_OWNER), ('manage',)),
         ]
 
     @property
