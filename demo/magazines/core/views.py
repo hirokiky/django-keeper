@@ -1,24 +1,43 @@
+from django.http import Http404
+from django.db.models import ObjectDoesNotExist
+from django.template.response import TemplateResponse
 from keeper.views import keeper, login_required
 
 from core.models import Magazine, Article
 
 
-@keeper('view', factory=lambda request: request.user.team)
+def my_team_factory(request):
+    team = getattr(request.user, 'team', None)
+    if not team:
+        raise Http404
+    return team
+
+
+def my_subscription_factory(request):
+    team = my_team_factory(request)
+    try:
+        sub = team.subscription
+    except ObjectDoesNotExist:
+        raise Http404
+    return sub
+
+
+@keeper('view', factory=my_team_factory)
 def team_dashboard(request):
     pass
 
 
-@keeper('manage', factory=lambda request: request.user.team)
+@keeper('manage', factory=my_team_factory)
 def team_manage(request):
     pass
 
 
-@keeper('manage', factory=lambda request: request.user.team)
+@keeper('manage', factory=my_team_factory)
 def team_billing(request):
     pass
 
 
-@keeper('manage', factory=lambda r: r.user.team.subscription)
+@keeper('managef', factory=my_subscription_factory)
 def team_billing_resign(request):
     pass
 
@@ -26,7 +45,7 @@ def team_billing_resign(request):
 @keeper('list_magazines',
         on_fail=login_required())
 def dashboard(request):
-    pass
+    return TemplateResponse(request, 'core/dashboard.html')
 
 
 @keeper('read',

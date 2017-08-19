@@ -1,0 +1,25 @@
+{% load keeper %}
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+  </head>
+  <body>
+    <nav class="navbar navbar-light bg-light navbar-expand-lg">
+        <ul class="navbar-nav mr-auto container">
+          <li>
+            <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+          </li>
+          {% has_permission request.user.team 'view' as team_view%}
+          {% if team_view %}
+          <li>
+            <a class="nav-link" href="{% url 'team_dashboard' %}">Team</a>
+          </li>
+          {% endif %}
+        </ul>
+    </nav>
+
+    {% block content %}
+    {% endblock %}
+  </body>
+</html>
