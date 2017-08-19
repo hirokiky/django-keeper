@@ -56,7 +56,7 @@ def detect_permissions(context, principals):
         raise TypeError("Context %s doesn't have __acl__ attribute" % context)
 
     permissions = set()
-    acl = context.__acl__
+    acl = context.__acl__()
     for action, principal, permission in acl:
         if isinstance(permission, tuple):
             p = set(permission)
