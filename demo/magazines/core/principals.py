@@ -1,7 +1,7 @@
 def magazines_principals(request):
     principals = set()
 
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and request.user.team:
         team = request.user.team
         principals.add(team)
         principals.add((team, request.user.role))

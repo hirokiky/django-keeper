@@ -31,7 +31,8 @@ class Team(models.Model):
 
 
 class User(AbstractUser):
-    team = models.ForeignKey(Team, related_name='members')
+    team = models.ForeignKey(Team, related_name='members',
+                             null=True, blank=True)
     role = models.CharField(max_length=2, choices=ROLE_CHOICES)
 
     class Meta:

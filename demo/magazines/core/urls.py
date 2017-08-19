@@ -10,5 +10,5 @@ urlpatterns = [
     url(r'^account/billing/resign/$', views.team_billing_resign),
     url(r'^$', views.dashboard),
     url(r'^magazines/(?P<magazine_id>\d+)/$', views.magazine_detail),
-    url(r'^magazines/(?P<magazine_id>\d+)/(?P<article_id>\d+)$', views.article_detail),
+    url(r'^magazines/(?P<magazine_id>\d+)/(?P<article_id>\d+)/$', views.article_detail),
 ]
