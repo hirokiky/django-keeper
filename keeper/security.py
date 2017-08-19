@@ -19,10 +19,12 @@ def import_module_inner(path):
     return getattr(import_module(module), func)
 
 
-try:
-    GlobalContext = import_module_inner(settings.KEEPER_GLOBAL_ACL)
-except AttributeError:
-    GlobalContext = None
+GlobalContext = None
+
+
+def initialize_global_context():
+    global GlobalContext
+    GlobalContext = import_module_inner(settings.KEEPER_GLOBAL_CONTEXT)
 
 
 @lru_cache(maxsize=1)
