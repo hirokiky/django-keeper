@@ -40,7 +40,7 @@ class Root:
 ```
 
 ```python
-KEEPER_GLOBAL_ACL = 'path.to.Root'
+KEEPER_GLOBAL_CONTEXT = 'path.to.Root'
 ```
 
 Applying `keeper` for views.
