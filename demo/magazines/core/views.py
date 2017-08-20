@@ -1,8 +1,9 @@
 from django.http import Http404
 from django.template.response import TemplateResponse
+from django.shortcuts import redirect
 from keeper.views import keeper, login_required
 
-from core.models import Magazine, Article
+from core.models import Magazine, Article, Subscription
 
 
 def my_team_factory(request):
@@ -21,22 +22,32 @@ def my_subscription_factory(request):
 
 @keeper('view', factory=my_team_factory)
 def team_dashboard(request):
-    pass
+    team = request.k_context
+    return TemplateResponse(request, 'core/team_dashboard.html',
+                            {'team': team})
 
 
 @keeper('manage', factory=my_team_factory)
 def team_manage(request):
-    pass
+    team = request.k_context
+    return TemplateResponse(request, 'core/team_manage.html',
+                            {'team': team})
 
 
 @keeper('manage', factory=my_team_factory)
 def team_billing(request):
-    pass
+    team = request.k_context
+    subscription = Subscription.objects.filter(team=team).first()
+    return TemplateResponse(request, 'core/team_billing.html',
+                            {'subscription': subscription,
+                             'team': team})
 
 
 @keeper('managef', factory=my_subscription_factory)
 def team_billing_resign(request):
-    pass
+    subscription = request.k_context
+    subscription.delete()
+    return redirect('team_dashboard')
 
 
 @keeper('list_magazines',
@@ -55,11 +66,15 @@ def dashboard(request):
         model=Magazine,
         mapper=lambda request, magazine_id: {'id': magazine_id})
 def magazine_detail(request, magazine_id):
-    pass
+    magazine = request.k_context
+    return TemplateResponse(request, 'core/magazine_detail.html',
+                            {'magazine': magazine})
 
 
 @keeper('read',
         model=Article,
         mapper=lambda request, magazine_id, article_id: {'id': article_id})
 def article_detail(request, magazine_id, article_id):
-    pass
+    article = request.k_context
+    return TemplateResponse(request, 'core/article_detail.html',
+                            {'article': article})

@@ -10,7 +10,7 @@
           <li>
             <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
           </li>
-          {% has_permission request.user.team 'view' as team_view%}
+          {% has_permission request.k_principals.team 'view' as team_view%}
           {% if team_view %}
           <li>
             <a class="nav-link" href="{% url 'team_dashboard' %}">Team</a>

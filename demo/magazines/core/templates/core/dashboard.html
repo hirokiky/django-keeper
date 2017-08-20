@@ -3,6 +3,14 @@
 {% block content %}
 
 <div class="container">
-  Dashboard
+  <ul>
+  {% for magazine in magazines %}
+    <li><a href="{% url 'magazine_detail' magazine_id=magazine.id %}">
+      {{ magazine.name }}
+    </a></li>
+  {% empty %}
+    <li>No Magazines</li>
+  {% endfor %}
+  </ul>
 </div>
 {% endblock %}
