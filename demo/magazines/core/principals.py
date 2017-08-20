@@ -1,3 +1,6 @@
+from django.db.models import ObjectDoesNotExist
+
+
 def magazines_principals(request):
     principals = {}
 
@@ -7,7 +10,13 @@ def magazines_principals(request):
         principals['team_role'] = (team, request.user.role)
         principals['role'] = ('role', request.user.role)
 
-        if team.subscription.is_active:
+        try:
+            subscription = team.subscription
+        except ObjectDoesNotExist:
+            subscription = None
+
+        if subscription and subscription.is_active:
+            principals['subscription'] = team.subscription
             principals['plan'] = team.subscription.plan
 
     return principals

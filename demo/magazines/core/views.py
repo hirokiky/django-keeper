@@ -1,5 +1,4 @@
 from django.http import Http404
-from django.db.models import ObjectDoesNotExist
 from django.template.response import TemplateResponse
 from keeper.views import keeper, login_required
 
@@ -7,17 +6,15 @@ from core.models import Magazine, Article
 
 
 def my_team_factory(request):
-    team = getattr(request.user, 'team', None)
+    team = request.k_principals.get('team')
     if not team:
         raise Http404
     return team
 
 
 def my_subscription_factory(request):
-    team = my_team_factory(request)
-    try:
-        sub = team.subscription
-    except ObjectDoesNotExist:
+    sub = request.k_principals.get('subscription')
+    if not sub:
         raise Http404
     return sub
 
