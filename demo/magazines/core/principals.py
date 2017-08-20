@@ -1,13 +1,13 @@
 def magazines_principals(request):
-    principals = set()
+    principals = {}
 
     if request.user.is_authenticated and request.user.team:
         team = request.user.team
-        principals.add(team)
-        principals.add((team, request.user.role))
-        principals.add(('role', request.user.role))
+        principals['team'] = team
+        principals['team_role'] = (team, request.user.role)
+        principals['role'] = ('role', request.user.role)
 
         if team.subscription.is_active:
-            principals.add(team.subscription.plan)
+            principals['plan'] = team.subscription.plan
 
     return principals

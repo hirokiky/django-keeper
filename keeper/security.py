@@ -11,6 +11,7 @@ Deny = 'deny'
 # Principals
 Everyone = 'keeper.everyone'
 Authenticated = 'keeper.authenticated'
+User = 'keeper.user'
 Staff = 'keeper.staff'
 
 
@@ -29,14 +30,14 @@ def initialize_global_context():
 
 @lru_cache(maxsize=1)
 def root_principals(request):
-    principals = set()
-    principals.add(Everyone)
+    principals = {}
+    principals[Everyone] = Everyone
     if hasattr(request, 'user'):
-        principals.add(request.user)
+        principals[User] = request.user
         if request.user.is_authenticated:
-            principals.add(Authenticated)
+            principals[Authenticated] = Authenticated
         if request.user.is_staff:
-            principals.add(Staff)
+            principals[Staff] = Staff
     return principals
 
 
@@ -62,7 +63,7 @@ def detect_permissions(context, principals):
             p = set(permission)
         else:
             p = {permission}
-        if principal in principals:
+        if principal in principals.values():
             if action is Allow:
                 permissions |= p
             elif action is Deny:
@@ -70,10 +71,15 @@ def detect_permissions(context, principals):
     return permissions
 
 
-def has_permission(permission, context, request):
+def detect_principals(request):
     callbacks = get_principals_callbacks()
-    principals = set()
+    principals = {}
     for c in callbacks:
-        principals |= c(request)
+        principals.update(c(request))
+    return principals
+
+
+def has_permission(permission, context, request):
+    principals = detect_principals(request)
     permissions = detect_permissions(context, principals)
     return permission in permissions

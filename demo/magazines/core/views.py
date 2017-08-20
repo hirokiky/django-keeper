@@ -45,7 +45,13 @@ def team_billing_resign(request):
 @keeper('list_magazines',
         on_fail=login_required())
 def dashboard(request):
-    return TemplateResponse(request, 'core/dashboard.html')
+    plan = request.k_principals.get('plan')
+    if plan:
+        magazines = request.k_principals['plan'].magazines.all()
+    else:
+        magazines = Magazine.objects.none()
+    return TemplateResponse(request, 'core/dashboard.html',
+                            {'magazines': magazines})
 
 
 @keeper('read',

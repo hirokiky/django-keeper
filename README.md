@@ -73,10 +73,10 @@ def add_comment(request, issue_id):
 
 ```python
 def myapp_principals(request):
-    principals = set()
+    principals = {}
 
     if request.user.is_authenticated:
-        principals.add(request.user.team)
+        principals["team"] = request.user.team
 
     return principals
 
