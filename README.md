@@ -1,6 +1,5 @@
 # django-keeper
 
-
 Authorization library for Django, not depends on models.
 
 * Won't depend on models
@@ -52,13 +51,21 @@ from keeper import keeper
 # Global Permissions
 @keeper('add_issue')
 def issue_list(request):
-    ...
+    """ View requires 'add_issue' permission of Root Context
+    """
 
 
 # Model Permissions
 @keeper('view', Issue, lambda request, issue_id: {'id': issue_id})
 def issue_detail(request, issue_id):
-    request.k_context  # Will be instance of Issue model got by the lambda mapping.
+    """ View requires 'view' permission of Issue model
+
+    * An issue object will be retrieved
+    * keeper will check whether the rquests has 'view' permission for the issue
+
+    The third argument function can return keyword argument to retrieve the issue object.
+    """
+    request.k_context  # Will be instance of the issue object
     ...
 
 
@@ -69,7 +76,27 @@ def add_comment(request, issue_id):
 
 ```
 
-### Additional Principals
+## Principals
+
+These `Authenticated`, `Everyone` or so is called `principals`.
+Principals is objects that will be used for permissions checking.
+In other words, principals are authenticated information.
+
+Default principals in `keeper.security.root_principals`.
+
+* `keeper.security.Everyone`: For all of users
+* `keeper.security.Authenticated`: For authenticated users
+* `user`: Authenticated user object itself
+* `keeper.security.Staff`: For `is_staff` users
+
+### Own principals
+
+You can also add your additional principals.
+
+principals is dict that will store some principal objects.
+principal objects can be any type of objects.
+
+principals is authenticated information that can be extracted from request.
 
 ```python
 def myapp_principals(request):
@@ -82,6 +109,8 @@ def myapp_principals(request):
 
 ```
 
+And you should specify the place of function.
+
 ```python
 KEEPER_PRINCIPALS_CALLBACKS = [
     'keeper.security.root_principals',
@@ -89,7 +118,8 @@ KEEPER_PRINCIPALS_CALLBACKS = [
 ]
 ```
 
-Use added prencipal in `__acl__`
+Then you can use added prencipals in `__acl__`.
+In this case `Project` can be edited by users who belongs to `team`.
 
 ```python
 class Project(models.Model):
