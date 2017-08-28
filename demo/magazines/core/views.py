@@ -7,17 +7,16 @@ from core.models import Magazine, Article, Subscription
 
 
 def my_team_factory(request):
-    team = request.k_principals.get('team')
-    if not team:
+    if not request.user.is_authenticated or not request.user.team:
         raise Http404
-    return team
+    return request.user.team
 
 
 def my_subscription_factory(request):
-    sub = request.k_principals.get('subscription')
-    if not sub:
+    if (not request.user.is_authenticated or
+            not request.user.team_subscription):
         raise Http404
-    return sub
+    return request.user.team_subscription
 
 
 @keeper('view', factory=my_team_factory)
@@ -53,9 +52,9 @@ def team_billing_resign(request):
 @keeper('list_magazines',
         on_fail=login_required())
 def dashboard(request):
-    plan = request.k_principals.get('plan')
-    if plan:
-        magazines = request.k_principals['plan'].magazines.all()
+    sub = request.user.team_subscription
+    if sub:
+        magazines = sub.plan.magazines.all()
     else:
         magazines = Magazine.objects.none()
     return TemplateResponse(request, 'core/dashboard.html',

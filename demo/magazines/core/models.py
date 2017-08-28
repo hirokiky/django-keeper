@@ -2,7 +2,10 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
 
-from keeper.security import Allow, Authenticated, Staff
+from keeper.security import Allow
+from keeper.operators import Authenticated, Staff
+
+from .operators import TeamRole, InPlans
 
 
 ROLE_OWNER = 'OW'
@@ -25,8 +28,8 @@ class Team(models.Model):
 
     def __acl__(self):
         return [
-            (Allow, (self, ROLE_OWNER), ('view', 'manage',)),
-            (Allow, (self, ROLE_MEMBER), ('view',)),
+            (Allow, TeamRole(self, ROLE_OWNER), ('view', 'manage',)),
+            (Allow, TeamRole(self, ROLE_MEMBER), ('view',)),
         ]
 
 
@@ -34,6 +37,16 @@ class User(AbstractUser):
     team = models.ForeignKey(Team, related_name='members',
                              null=True, blank=True)
     role = models.CharField(max_length=2, choices=ROLE_CHOICES)
+
+    @property
+    def team_subscription(self):
+        if not self.team:
+            return None
+        try:
+            subscription = self.team.subscription
+        except models.ObjectDoesNotExist:
+            return None
+        return subscription
 
     class Meta:
         swappable = 'AUTH_USER_MODEL'
@@ -45,8 +58,7 @@ class Magazine(models.Model):
     def __acl__(self):
         if self.published:
             return [
-                (Allow, plan, 'read')
-                for plan in self.allowed_plans.all()
+                (Allow, InPlans(self.allowed_plans.all()), 'read')
             ]
         else:
             return [
@@ -72,10 +84,8 @@ class Subscription(models.Model):
     active_until = models.DateTimeField()
 
     def __acl__(self):
-        # Alternative implementation:
-        #     return self.team.__acl__()
         return [
-            (Allow, (self.team, ROLE_OWNER), ('manage',)),
+            (Allow, TeamRole(self.team, ROLE_OWNER), ('manage',)),
         ]
 
     @property

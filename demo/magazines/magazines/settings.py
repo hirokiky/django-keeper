@@ -125,10 +125,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# Keeper
-KEEPER_PRINCIPALS_CALLBACKS = [
-    'keeper.security.root_principals',
-    'core.principals.magazines_principals',
-]
-
 KEEPER_GLOBAL_CONTEXT = 'core.models.Root'

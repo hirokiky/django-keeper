@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.http import HttpResponseForbidden, Http404
 from django.shortcuts import get_object_or_404, redirect as django_redirect
 
-from .security import detect_permissions, detect_principals, GlobalContext
+from .security import detect_permissions, GlobalContext
 
 
 def login_required(login_url=None, redirect_field_name=REDIRECT_FIELD_NAME):
@@ -52,12 +52,11 @@ def keeper(permission,
             else:
                 context = GlobalContext()
 
-            principals = detect_principals(request)
+            permissions = detect_permissions(context, request)
 
             request.k_context = context
-            request.k_principals = principals
+            request.k_permissions = permissions
 
-            permissions = detect_permissions(context, principals)
             if permission in permissions:
                 return f(request, *args, **kwargs)
             else:

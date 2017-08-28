@@ -5,13 +5,29 @@ Authorization library for Django, not depends on models.
 * Won't depend on models
 * Won't save assignments/permissions into datastores
 
+## Install
+
+```bash
+$ pip install django-keeper
+```
+
+And add to INSTALLED_APPS
+
+```python
+INSTALLED_APPS = [
+    ...
+    'keeper',
+]
+```
+
 ## At A Glance
 
 Declarative permission mapping for models.
 
 ```python
 from django.conf import settings
-from keeper import Allow, Everyone, Authenticated
+from keeper.security import Allow
+from keeper.operations import Everyone, Authenticated, IsAuthenticatedUser
 
 
 class Issue(models.Model):
@@ -22,7 +38,7 @@ class Issue(models.Model):
         return [
             (Allow, Everyone, 'view'),
             (Allow, Authenticated, 'add_comment'),
-            (Allow, self.author, 'edit'),
+            (Allow, IsAuthenticatedUser(self.author), 'edit'),
         ]
 
 ```
@@ -37,6 +53,8 @@ class Root:
             (Allow, Authenticated, 'add_issue'),
         ]
 ```
+
+And specify it.
 
 ```python
 KEEPER_GLOBAL_CONTEXT = 'path.to.Root'
@@ -76,62 +94,41 @@ def add_comment(request, issue_id):
 
 ```
 
-## Principals
-
-These `Authenticated`, `Everyone` or so is called `principals`.
-Principals is objects that will be used for permissions checking.
-In other words, principals are authenticated information.
-
-Default principals in `keeper.security.root_principals`.
-
-* `keeper.security.Everyone`: For all of users
-* `keeper.security.Authenticated`: For authenticated users
-* `user`: Authenticated user object itself
-* `keeper.security.Staff`: For `is_staff` users
-
-### Own principals
-
-You can also add your additional principals.
-
-principals is dict that will store some principal objects.
-principal objects can be any type of objects.
-
-principals is authenticated information that can be extracted from request.
+## Own Operators
 
 ```python
-def myapp_principals(request):
-    principals = {}
+from keeper.operators import Operator, Authenticated
 
-    if request.user.is_authenticated:
-        principals["team"] = request.user.team
 
-    return principals
+class IsIP(Operator):
+    def __init__(self, ip):
+        self.ip = ip
+        
+    def check(self, request):
+        return request.META.get('REMOTE_ADDR') == self.ip
 
+
+class BelongsTeam(Authenticated):
+    def __init__(self, team, role):
+        self.team = team
+
+    def check(self, request):
+        if not super().check(request):
+            return False
+        return  request.user.team == self.team
 ```
 
-And you should specify the place of function.
+Use it in ACL
 
 ```python
-KEEPER_PRINCIPALS_CALLBACKS = [
-    'keeper.security.root_principals',
-    'myapp.security.myapp_principals',
-]
-```
-
-Then you can use added prencipals in `__acl__`.
-In this case `Project` can be edited by users who belongs to `team`.
-
-```python
-class Project(models.Model):
-    team = models.ForeginKey('myapp.Team')
-    ...
-
+class Article(models.Model):
+    team = models.ForeignKey(Team)
+    
     def __acl__(self):
         return [
             (Allow, Everyone, 'view'),
-            (Allow, self.team, 'edit'),
+            (Allow, BelongsTeam(self.team), 'edit'),
         ]
-
 ```
 
 ## Alternative
@@ -139,6 +136,7 @@ class Project(models.Model):
 * [django-guardian](https://github.com/django-guardian/django-guardian)
     * It depends on databases
     * Not way to handle global permissions, not just for a model
+* [django-rules](https://github.com/dfunckt/django-rules)
 
 ## FAQ
 

@@ -1,5 +1,4 @@
 from importlib import import_module
-from functools import lru_cache
 
 from django.conf import settings
 
@@ -8,62 +7,44 @@ from django.conf import settings
 Allow = 'allow'
 Deny = 'deny'
 
-# Principals
-Everyone = 'keeper.everyone'
-Authenticated = 'keeper.authenticated'
-User = 'keeper.user'
-Staff = 'keeper.staff'
-
 
 def import_module_inner(path):
-    module, func = path.rsplit('.', 1)
-    return getattr(import_module(module), func)
+    try:
+        module, func = path.rsplit('.', 1)
+    except ImportError:
+        return None
+    return getattr(import_module(module), func, None)
 
 
 GlobalContext = None
 
 
 def initialize_global_context():
+    if not hasattr(settings, 'KEEPER_GLOBAL_CONTEXT'):
+        return
+
     global GlobalContext
     GlobalContext = import_module_inner(settings.KEEPER_GLOBAL_CONTEXT)
 
 
-@lru_cache(maxsize=1)
-def root_principals(request):
-    principals = {}
-    principals[Everyone] = Everyone
-    if hasattr(request, 'user'):
-        principals[User] = request.user
-        if request.user.is_authenticated:
-            principals[Authenticated] = Authenticated
-        if request.user.is_staff:
-            principals[Staff] = Staff
-    return principals
-
-
-def get_principals_callbacks():
-    paths = getattr(settings, 'KEEPER_PRINCIPALS_CALLBACKS', None)
-    if paths:
-        funcs = []
-        for path in paths:
-            funcs.append(import_module_inner(path))
-        return funcs
-    else:
-        return [root_principals]
-
-
-def detect_permissions(context, principals):
+def detect_permissions(context, request):
     if not hasattr(context, '__acl__'):
         raise TypeError("Context %s doesn't have __acl__ attribute" % context)
 
     permissions = set()
     acl = context.__acl__()
-    for action, principal, permission in acl:
+    for action, operator, permission in acl:
         if isinstance(permission, tuple):
             p = set(permission)
         else:
             p = {permission}
-        if principal in principals.values():
+
+        if isinstance(operator, type):
+            o = operator()
+        else:
+            o = operator
+
+        if o(request):
             if action is Allow:
                 permissions |= p
             elif action is Deny:
@@ -71,15 +52,6 @@ def detect_permissions(context, principals):
     return permissions
 
 
-def detect_principals(request):
-    callbacks = get_principals_callbacks()
-    principals = {}
-    for c in callbacks:
-        principals.update(c(request))
-    return principals
-
-
 def has_permission(permission, context, request):
-    principals = detect_principals(request)
-    permissions = detect_permissions(context, principals)
+    permissions = detect_permissions(context, request)
     return permission in permissions
