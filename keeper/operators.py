@@ -12,7 +12,7 @@ class Authenticated(Operator):
         return request.user.is_authenticated
 
 
-class IsAuthenticatedUser(Authenticated):
+class IsUser(Authenticated):
     def __init__(self, user):
         self.user = user
 
