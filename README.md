@@ -5,6 +5,13 @@ Authorization library for Django, not depends on models.
 * Won't depend on models
 * Won't save assignments/permissions into datastores
 
+Supported versions:
+
+* Python 3.5
+* Python 3.6
+* Django 1.10
+* Django 1.11
+
 ## Install
 
 ```bash
