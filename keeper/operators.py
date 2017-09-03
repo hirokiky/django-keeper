@@ -9,7 +9,7 @@ class Everyone(Operator):
 
 class Authenticated(Operator):
     def __call__(self, request):
-        return request.user.is_authenticated
+        return hasattr(request, 'user') and request.user.is_authenticated
 
 
 class IsUser(Authenticated):
@@ -17,13 +17,13 @@ class IsUser(Authenticated):
         self.user = user
 
     def __call__(self, request):
-        if not super()(request):
+        if not super().__call__(request):
             return False
         return self.user == request.user
 
 
 class Staff(Authenticated):
     def __call__(self, request):
-        if not super()(request):
+        if not super().__call__(request):
             return False
         return request.user.is_staff

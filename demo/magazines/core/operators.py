@@ -7,7 +7,7 @@ class TeamRole(Authenticated):
         self.role = role
 
     def __call__(self, request):
-        if not super()(request):
+        if not super().__call__(request):
             return False
         return (
             request.user.team == self.team and
@@ -20,7 +20,7 @@ class InPlans(Authenticated):
         self.plans = plans
 
     def __call__(self, request):
-        if not super()(request):
+        if not super().__call__(request):
             return False
         subscription = request.user.team.subscription
         if not subscription:
