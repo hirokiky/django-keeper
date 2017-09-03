@@ -27,7 +27,7 @@ Declarative permission mapping for models.
 ```python
 from django.conf import settings
 from keeper.security import Allow
-from keeper.operations import Everyone, Authenticated, IsUser
+from keeper.operators import Everyone, Authenticated, IsUser
 
 
 class Issue(models.Model):
