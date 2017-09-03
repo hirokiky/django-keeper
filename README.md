@@ -117,16 +117,23 @@ def issue_list(request):
 
 ```
 
-## Own Operators
+## Operators
 
 Operators is just `Callable[[HttpRequest], bool]`.
-So you can create your own operators easily.
+By default django-keeper has these operators:
+
+* `keeper.operators.Everyone`
+* `keeper.operators.Authenticated`
+* `keeper.operators.IsUser`
+* `keeper.operators.Staff`
+
+Also you can create your own operators easily.
 
 ```python
-from keeper.operators import Operator, Authenticated
+from keeper.operators import Authenticated
 
 
-class IsIP(Operator):
+class IsIP:
     def __init__(self, ip):
         self.ip = ip
         
@@ -157,6 +164,31 @@ class Article(models.Model):
             (Allow, IsIP(settings.COMPANY_IP_ADDRESS), 'edit'),
         ]
 ```
+
+## On Fail Actions
+
+You can change actions when requests can't pass ACLs.
+
+```
+from keeper.views import keeper, login_required
+
+@keeper(
+    'view_articles',
+    on_fail=login_required(),
+)
+def dashboard(request):
+    ...
+```
+
+This view will behave just like `@login_required` decorator of Django
+when requests don't have 'view' permission.
+
+Also you can use other actions.
+
+* `keeper.views.login_required`
+* `keeper.views.permission_denied`
+* `keeper.views.not_found`
+* `keeper.views.redirect`
 
 ## Alternative
 
