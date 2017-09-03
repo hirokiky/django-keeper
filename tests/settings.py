@@ -4,6 +4,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'keeper',
+
+    'tests',
 )
 DATABASES = {
     'default': {
@@ -13,3 +15,5 @@ DATABASES = {
 }
 SECRET_KEY = "secret_key_for_testing"
 MIDDLEWARE_CLASSES = []
+
+ROOT_URLCONF = 'tests.urls'
