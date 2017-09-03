@@ -199,6 +199,32 @@ Also you can use other actions.
 * `keeper.views.not_found`
 * `keeper.views.redirect`
 
+## Use in template
+
+Handling permissions in templates is also supported.
+
+```django
+{% load keeper %}
+
+{% has_permission issue 'edit' as can_edit %}
+
+{% if can_edit %}
+    <a href="...">Edit</a>
+{% endif %}
+```
+
+When checking global permission, use `has_global_permission`.
+
+```django
+{% load keeper %}
+
+{% has_global_permission 'add_issue' as can_add_issue %}
+
+{% if can_add_issue %}
+    <a href="...">New Issue</a>
+{% endif %}
+```
+
 ## Alternative
 
 * [django-guardian](https://github.com/django-guardian/django-guardian)

@@ -55,3 +55,8 @@ def detect_permissions(context, request):
 def has_permission(permission, context, request):
     permissions = detect_permissions(context, request)
     return permission in permissions
+
+
+def has_global_permission(permission, request):
+    context = GlobalContext()
+    return has_permission(permission, context, request)
