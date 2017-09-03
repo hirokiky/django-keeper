@@ -59,7 +59,7 @@ Instances of model allow:
 Then, apply `@keeper` for views.
 
 ```python
-from keeper import keeper
+from keeper.views import keeper
 
 
 # Model Permissions
