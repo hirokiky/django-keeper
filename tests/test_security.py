@@ -1,6 +1,4 @@
-from unittest.mock import Mock
-
-from django.test import TestCase, RequestFactory
+from django.test import TestCase
 
 from keeper.security import (
     detect_permissions,
@@ -12,22 +10,7 @@ from keeper.operators import (
     Authenticated,
     IsUser,
 )
-
-
-dummy_user = Mock(
-    is_authenticated=True,
-    is_staff=False,
-)
-
-rf = RequestFactory()
-
-
-class Model:
-    def __init__(self, acl_function):
-        self.acl_function = acl_function
-
-    def __acl__(self):
-        return self.acl_function()
+from .testing import rf, dummy_user, Model
 
 
 class TestDetectPermissions(TestCase):
