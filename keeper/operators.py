@@ -1,10 +1,11 @@
 class Operator:
     def __call__(self, request):
-        return True
+        raise NotImplementedError
 
 
 class Everyone(Operator):
-    pass
+    def __call__(self, request):
+        return True
 
 
 class Authenticated(Operator):
