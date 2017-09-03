@@ -66,7 +66,8 @@ from keeper import keeper
 @keeper(
     'view',
     model=Issue,
-    mapper=lambda request, issue_id: {'id': issue_id})
+    mapper=lambda request, issue_id: {'id': issue_id},
+)
 def issue_detail(request, issue_id):
     """ View requires 'view' permission of Issue model
 
@@ -83,7 +84,8 @@ def issue_detail(request, issue_id):
 @keeper(
     'add_comment',
     model=Issue,
-    mapper=lambda request, issue_id: {'id': issue_id})
+    mapper=lambda request, issue_id: {'id': issue_id},
+)
 def add_comment(request, issue_id):
     ...
 
@@ -176,7 +178,7 @@ class Article(models.Model):
 
 You can change actions when requests can't pass ACLs.
 
-```
+```python
 from keeper.views import keeper, login_required
 
 @keeper(
