@@ -125,4 +125,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+AUTHENTICATION_BACKENDS = (
+    'keeper.permissions.ObjectPermissionBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
 KEEPER_GLOBAL_CONTEXT = 'core.models.Root'
