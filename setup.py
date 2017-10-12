@@ -7,7 +7,7 @@ README = open(os.path.join(here, 'README.md')).read()
 
 setup(
     name='django-keeper',
-    version='0.1.3',
+    version='0.1.4',
     install_requires=[
         'Django>=1.10,<2.0',
     ],
@@ -18,5 +18,5 @@ setup(
     description="Authorization library for Django, with ACL, not depends on models.",
     long_description=README,
     test_suite="tests",
-    packages=['keeper'],
+    packages=['keeper', 'keeper.templatetags'],
 )
