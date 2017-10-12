@@ -225,6 +225,19 @@ When checking global permission, use `has_global_permission`.
 {% endif %}
 ```
 
+## With Django Core
+
+Add the authentication backend:
+
+```python
+AUTHENTICATION_BACKENDS = (
+    'keeper.permissions.ObjectPermissionBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+```
+
+Now `User.has_perm` method will consider permissions of django-keeper.
+
 ## Alternative
 
 * [django-guardian](https://github.com/django-guardian/django-guardian)
