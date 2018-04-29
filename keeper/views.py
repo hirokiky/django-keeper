@@ -44,7 +44,7 @@ def keeper(permission,
     def dec(f):
         @wraps(f)
         def _wrapped(request, *args, **kwargs):
-            if model and mapper:
+            if mapper:
                 model_kwargs = mapper(request, *args, **kwargs)
                 context = get_object_or_404(model, **model_kwargs)
             elif factory:
