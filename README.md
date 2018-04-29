@@ -11,6 +11,7 @@ Supported versions:
 * Python 3.6
 * Django 1.10
 * Django 1.11
+* Django 2.0
 
 ## Install
 

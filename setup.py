@@ -7,9 +7,9 @@ README = open(os.path.join(here, 'README.md')).read()
 
 setup(
     name='django-keeper',
-    version='0.1.4',
+    version='0.1.6',
     install_requires=[
-        'Django>=1.10,<2.0',
+        'Django>=1.10,<2.1',
     ],
     author='Hiroki KIYOHARA',
     author_email='hirokiky@gmail.com',
