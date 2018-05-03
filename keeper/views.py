@@ -70,3 +70,30 @@ def keeper(permission,
 def keeper_cbv(*args, **kwargs):
     return method_decorator(keeper(*args, **kwargs),
                             name='dispatch')
+
+
+class KeeperDRFPermission:
+    global_permission = None
+    model_permission = None
+
+    def has_permission(self, request, view):
+        if self.global_permission is None:
+            return True
+
+        ctx = GlobalContext()
+        permissions = detect_permissions(ctx, request)
+        return self.global_permission in permissions
+
+    def has_object_permission(self, request, view, obj):
+        if self.model_permission is None:
+            return True
+
+        permissions = detect_permissions(obj, request)
+        return self.model_permission in permissions
+
+
+def keeper_drf_permission_factory(global_perm=None, model_perm=None):
+    class _KeeperDRFPermission(KeeperDRFPermission):
+        global_permission = global_perm
+        model_permission = model_perm
+    return _KeeperDRFPermission
