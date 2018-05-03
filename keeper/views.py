@@ -4,6 +4,7 @@ from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import user_passes_test
 from django.http import HttpResponseForbidden, Http404
 from django.shortcuts import get_object_or_404, redirect as django_redirect
+from django.utils.decorators import method_decorator
 
 from .security import detect_permissions, GlobalContext
 
@@ -64,3 +65,8 @@ def keeper(permission,
 
         return _wrapped
     return dec
+
+
+def keeper_cbv(*args, **kwargs):
+    return method_decorator(keeper(*args, **kwargs),
+                            name='dispatch')
