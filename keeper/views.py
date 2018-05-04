@@ -113,16 +113,18 @@ class KeeperDRFPermission:
     ```
     """
     def has_permission(self, request, view):
-        if getattr(view, 'global_permission', None) is None:
+        perm = getattr(view, 'global_permission', None)
+        if perm is None:
             return True
 
         ctx = GlobalContext()
         permissions = detect_permissions(ctx, request)
-        return self.global_permission in permissions
+        return perm in permissions
 
     def has_object_permission(self, request, view, obj):
-        if getattr(view, 'model_permission', None) is None:
+        perm = getattr(view, 'model_permission', None)
+        if perm is None:
             return True
 
         permissions = detect_permissions(obj, request)
-        return self.model_permission in permissions
+        return perm in permissions
