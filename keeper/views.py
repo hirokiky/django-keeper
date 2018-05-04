@@ -67,7 +67,52 @@ def keeper(permission,
     return dec
 
 
+class SingleObjectPermissionMixin:
+    """ Mixin to check permission for get_object method.
+    This Mixin can be used with DetailView, UpdateView, DeleteView and so on.
+
+    ```
+    class MyUpdateView(SingleObjectPermissionMixin, UpdateView):
+        permission = 'edit'
+        on_fail = not_found
+        ...
+    ```
+    """
+    permission = None
+    on_fail = permission_denied
+
+    class KeeperCBVPermissionDenied(Exception):
+        pass
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            return super().dispatch(request, *args, **kwargs)
+        except self.KeeperCBVPermissionDenied:
+            return self.on_fail(request, *args, **kwargs)
+
+    def get_object(self):
+        obj = super().get_object()
+        permissions = detect_permissions(obj, self.request)
+
+        if self.permission not in permissions:
+            raise self.KeeperCBVPermissionDenied
+
+        self.k_permissions = permissions
+        return obj
+
+
 class KeeperDRFPermission:
+    """ View peermission class for Django Rest Framework
+
+    ```
+    class MyViewset(mixins.RetrieveModelMixin,
+                    mixins.DestroyModelMixin,
+                    GenericViewset):
+        permission_classes = (KeeperDRFPermission,)
+        model_permission = 'manage'
+        ...
+    ```
+    """
     def has_permission(self, request, view):
         if getattr(view, 'global_permission', None) is None:
             return True
