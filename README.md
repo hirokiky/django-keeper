@@ -9,9 +9,11 @@ Supported versions:
 
 * Python 3.5
 * Python 3.6
+* Python 3.7
 * Django 1.10
 * Django 1.11
 * Django 2.0
+* Django 2.1
 
 ## Install
 
