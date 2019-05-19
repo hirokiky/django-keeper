@@ -41,7 +41,6 @@ class IsUser(Operator):
         return Authenticated()(request) and self.user == request.user
 
 
-# TODO: Use combining nicely.
 class Staff(Operator):
     def __call__(self, request):
         return Authenticated()(request) and request.user.is_staff
