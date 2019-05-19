@@ -142,10 +142,10 @@ By default django-keeper has these operators:
 Also you can create your own operators easily.
 
 ```python
-from keeper.operators import Authenticated
+from keeper.operators import Authenticated, Operator
 
 
-class IsIP:
+class IsIP(Operator):
     def __init__(self, ip):
         self.ip = ip
         
@@ -176,6 +176,26 @@ class Article(models.Model):
             (Allow, IsIP(settings.COMPANY_IP_ADDRESS), 'edit'),
         ]
 ```
+
+### Combining operators
+
+You can use bitwise operators to combine multiple "Operators".
+
+
+```python
+class Article(models.Model):
+    def __acl__(self):
+        return [
+            (Allow, Authenticated() & IsIP(settings.COMPANY_IP_ADDRESS), 'view'),
+        ]
+```
+
+There operators can be used
+
+* `a & b`
+* `a | b`
+* `a ^ b`
+* `~a`
 
 ## On Fail Actions
 
