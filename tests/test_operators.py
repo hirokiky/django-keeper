@@ -3,55 +3,53 @@ import pytest
 from django.contrib.auth.models import AnonymousUser
 from django.test import TestCase
 
-from keeper.operators import k_and, k_or, Operator, Everyone, Authenticated, IsUser, Staff
+from keeper.operators import operator, Everyone, Authenticated, IsUser, Staff
 from.testing import dummy_user, dummy_staff
 from typing import List
 
-class true(Operator):
-    def __call__(self, request):
-        return True
+
+@operator
+def true(request):
+    return True
 
 
-class false(Operator):
-    def __call__(self, request):
-        return False
+@operator
+def false(request):
+    return False
 
 
-class TestKAnd:
-    def test_true(self, rf):
-        actual = k_and(true(), true())
+class TestOperatorAnd:
+    def test_and_true(self, rf):
+        actual = true & true
         assert actual(rf.get('/'))
 
-    def test_false(self, rf):
-        actual = k_and(true(), false())
+    def test_and_false(self, rf):
+        actual = true & false
         assert not actual(rf.get('/'))
 
-    def test_as_class(self, rf):
-        actual = k_and(true, true)
+    def test_and_multiple(self, rf):
+        actual = true & true & true
         assert actual(rf.get('/'))
 
-    def test_multiple(self, rf):
-        actual = k_and(true, true, true())
+    def test_or_true(self, rf):
+        actual = true | false
         assert actual(rf.get('/'))
 
-
-class TestKOr:
-    def test_true(self, rf):
-        actual = k_or(true(), false())
-        assert actual(rf.get('/'))
-
-    def test_false(self, rf):
-        actual = k_or(false(), false())
+    def test_or_false(self, rf):
+        actual = false | false
         assert not actual(rf.get('/'))
 
-    def test_as_class(self, rf):
-        actual = k_or(true, false)
+    def test_or_multiple(self, rf):
+        actual = false | true | true
         assert actual(rf.get('/'))
 
-    def test_multiple(self, rf):
-        actual = k_or(false, true, true(), false())
+    def test_xor(self, rf):
+        actual = true ^ false
         assert actual(rf.get('/'))
 
+    def test_not(self, rf):
+        actual = ~false
+        assert actual(rf.get('/'))
 
 class TestEveryone:
     def test_it(self, rf):

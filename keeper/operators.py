@@ -1,26 +1,38 @@
-def k_and(*operators):
-    operators = [o() if isinstance(o, type) else o
-                 for o in operators]
-
-    def combined(request):
-        return all(o(request) for o in operators)
-
-    return combined
-
-
-def k_or(*operators):
-    operators = [o() if isinstance(o, type) else o
-                 for o in operators]
-
-    def combined(request):
-        return any(o(request) for o in operators)
-
-    return combined
-
-
 class Operator:
     def __call__(self, request):
         raise NotImplementedError
+
+    def __and__(self, other):
+        class Combined(Operator):
+            def __call__(self_, request):
+                return self(request) & other(request)
+        return Combined()
+
+    def __or__(self, other):
+        class Combined(Operator):
+            def __call__(self_, request):
+                return self(request) | other(request)
+        return Combined()
+
+    def __xor__(self, other):
+        class Combined(Operator):
+            def __call__(self_, request):
+                return self(request) ^ other(request)
+        return Combined()
+
+    def __invert__(self):
+        class Inverted(Operator):
+            def __call__(self_, request):
+                return ~self(request)
+        return Inverted()
+
+
+def operator(func):
+    class AsOperator(Operator):
+        def __call__(self, request):
+            return func(request)
+    AsOperator.__name__ = func.__name__
+    return AsOperator()
 
 
 class Everyone(Operator):
