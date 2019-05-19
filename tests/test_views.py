@@ -1,12 +1,14 @@
 from django.contrib.auth.models import AnonymousUser
 from django.test import TestCase
 
+import pytest
+
 from keeper.operators import Authenticated
 from keeper.security import Allow
 from keeper.views import keeper, login_required
 
 from .models import Article
-from .testing import rf, dummy_user
+from .testing import dummy_user
 
 
 class Root:
@@ -16,12 +18,9 @@ class Root:
         ]
 
 
-class TestKeeper(TestCase):
-    def test_global_context(self):
-        # TODO
-        pass
-
-    def test_model(self):
+@pytest.mark.django_db
+class TestKeeper:
+    def test_model(self, rf):
         def article_detail(request, article_id):
             return "res"
 
@@ -38,10 +37,10 @@ class TestKeeper(TestCase):
         req = rf.get('/')
         req.user = dummy_user
         res = target(req, article_id=1)
-        self.assertEqual(res, 'res')
-        self.assertEqual(req.k_context, article)
+        assert res == 'res'
+        assert req.k_context == article
 
-    def test_factory(self):
+    def test_factory(self, rf):
         def my_article(request):
             return "res"
 
@@ -55,10 +54,10 @@ class TestKeeper(TestCase):
         req = rf.get('/')
         req.user = dummy_user
         res = target(req)
-        self.assertEqual(res, 'res')
-        self.assertEqual(req.k_context, article)
+        assert res == 'res'
+        assert req.k_context == article
 
-    def test_on_fail(self):
+    def test_on_fail(self, rf):
         def my_article(request):
             return "res"
 
@@ -71,9 +70,9 @@ class TestKeeper(TestCase):
 
         req = rf.get('/')
         res = target(req)
-        self.assertEqual(res.status_code, 403)
+        assert res.status_code == 403
 
-    def test_on_fail_not_found(self):
+    def test_on_fail_not_found(self, rf):
         def my_article(request):
             return "res"
 
@@ -88,5 +87,5 @@ class TestKeeper(TestCase):
         req = rf.get('/')
         req.user = AnonymousUser()
         res = target(req)
-        self.assertEqual(res.status_code, 302)
-        self.assertEqual(res.url, '/login/?next=/')
+        assert res.status_code == 302
+        assert res.url == '/login/?next=/'

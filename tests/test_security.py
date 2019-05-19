@@ -1,3 +1,5 @@
+import pytest
+
 from django.test import TestCase
 
 from keeper.security import (
@@ -10,11 +12,11 @@ from keeper.operators import (
     Authenticated,
     IsUser,
 )
-from .testing import rf, dummy_user, Model
+from .testing import dummy_user, Model
 
 
-class TestDetectPermissions(TestCase):
-    def test_it(self):
+class TestDetectPermissions:
+    def test_it(self, rf):
         context = Model(lambda: [
             (Allow, Everyone, 'view'),
             (Allow, Authenticated, 'edit'),
@@ -22,31 +24,31 @@ class TestDetectPermissions(TestCase):
         req = rf.get('/')
         req.user = dummy_user
         actual = detect_permissions(context, req)
-        self.assertEqual(actual, {'view', 'edit'})
+        assert actual == {'view', 'edit'}
 
-    def test_no_acl(self):
+    def test_no_acl(self, rf):
         req = rf.get('/')
-        with self.assertRaises(TypeError):
+        with pytest.raises(TypeError):
             detect_permissions(object(), req)
 
-    def test_multiple_permissions(self):
+    def test_multiple_permissions(self, rf):
         context = Model(lambda: [
             (Allow, Everyone, ('view', 'edit')),
         ])
         req = rf.get('/')
         actual = detect_permissions(context, req)
-        self.assertEqual(actual, {'view', 'edit'})
+        assert actual == {'view', 'edit'}
 
-    def test_operator_object(self):
+    def test_operator_object(self, rf):
         context = Model(lambda: [
             (Allow, IsUser(dummy_user), 'view'),
         ])
         req = rf.get('/')
         req.user = dummy_user
         actual = detect_permissions(context, req)
-        self.assertEqual(actual, {'view'})
+        assert actual == {'view'}
 
-    def test_deny(self):
+    def test_deny(self, rf):
         context = Model(lambda: [
             (Allow, Everyone, ('view', 'edit')),
             (Deny, IsUser(dummy_user), 'edit'),
@@ -54,16 +56,16 @@ class TestDetectPermissions(TestCase):
         req = rf.get('/')
         req.user = dummy_user
         actual = detect_permissions(context, req)
-        self.assertEqual(actual, {'view'})
+        assert actual == {'view'}
 
         req = rf.get('/')
         actual = detect_permissions(context, req)
-        self.assertEqual(actual, {'view', 'edit'})
+        assert actual == {'view', 'edit'}
 
-    def test_not_matched(self):
+    def test_not_matched(self, rf):
         context = Model(lambda: [
             (Allow, Authenticated, 'view'),
         ])
         req = rf.get('/')
         actual = detect_permissions(context, req)
-        self.assertEqual(actual, set())
+        assert actual == set()

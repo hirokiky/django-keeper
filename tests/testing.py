@@ -13,8 +13,6 @@ dummy_staff = Mock(
     is_staff=True,
 )
 
-rf = RequestFactory()
-
 
 class Model:
     def __init__(self, acl_function):

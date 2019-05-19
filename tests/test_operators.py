@@ -1,55 +1,57 @@
+import pytest
+
 from django.contrib.auth.models import AnonymousUser
 from django.test import TestCase
 
 from keeper.operators import Everyone, Authenticated, IsUser, Staff
-from.testing import rf, dummy_user, dummy_staff
+from.testing import dummy_user, dummy_staff
 
 
-class TestEveryone(TestCase):
-    def test_it(self):
+class TestEveryone:
+    def test_it(self, rf):
         req = rf.get('/')
-        self.assertTrue(Everyone()(req))
+        assert Everyone()(req)
 
 
-class TestAuthenticated(TestCase):
-    def test_it(self):
+class TestAuthenticated:
+    def test_it(self, rf):
         req = rf.get('/')
         req.user = dummy_user
-        self.assertTrue(Authenticated()(req))
+        assert Authenticated()(req)
 
-    def test_no_user(self):
+    def test_no_user(self, rf):
         req = rf.get('/')
-        self.assertFalse(Authenticated()(req))
+        assert not Authenticated()(req)
 
-    def test_not_authenticated(self):
+    def test_not_authenticated(self, rf):
         req = rf.get('/')
         req.user = AnonymousUser()
-        self.assertFalse(Authenticated()(req))
+        assert not Authenticated()(req)
 
 
-class TestIsUser(TestCase):
-    def test_it(self):
+class TestIsUser:
+    def test_it(self, rf):
         req = rf.get('/')
         req.user = dummy_user
-        self.assertTrue(IsUser(dummy_user)(req))
+        assert IsUser(dummy_user)(req)
 
-    def test_not_same_user(self):
+    def test_not_same_user(self, rf):
         req = rf.get('/')
         req.user = dummy_staff
-        self.assertFalse(IsUser(dummy_user)(req))
+        assert not IsUser(dummy_user)(req)
 
-    def test_no_user(self):
+    def test_no_user(self, rf):
         req = rf.get('/')
-        self.assertFalse(IsUser(dummy_user)(req))
+        assert not IsUser(dummy_user)(req)
 
 
-class TestStaff(TestCase):
-    def test_it(self):
+class TestStaff:
+    def test_it(self, rf):
         req = rf.get('/')
         req.user = dummy_staff
-        self.assertTrue(Staff()(req))
+        assert Staff()(req)
 
-    def test_no_staff(self):
+    def test_no_staff(self, rf):
         req = rf.get('/')
         req.user = dummy_user
-        self.assertFalse(Staff()(req))
+        assert not Staff()(req)
