@@ -3,8 +3,54 @@ import pytest
 from django.contrib.auth.models import AnonymousUser
 from django.test import TestCase
 
-from keeper.operators import Everyone, Authenticated, IsUser, Staff
+from keeper.operators import k_and, k_or, Operator, Everyone, Authenticated, IsUser, Staff
 from.testing import dummy_user, dummy_staff
+from typing import List
+
+class true(Operator):
+    def __call__(self, request):
+        return True
+
+
+class false(Operator):
+    def __call__(self, request):
+        return False
+
+
+class TestKAnd:
+    def test_true(self, rf):
+        actual = k_and(true(), true())
+        assert actual(rf.get('/'))
+
+    def test_false(self, rf):
+        actual = k_and(true(), false())
+        assert not actual(rf.get('/'))
+
+    def test_as_class(self, rf):
+        actual = k_and(true, true)
+        assert actual(rf.get('/'))
+
+    def test_multiple(self, rf):
+        actual = k_and(true, true, true())
+        assert actual(rf.get('/'))
+
+
+class TestKOr:
+    def test_true(self, rf):
+        actual = k_or(true(), false())
+        assert actual(rf.get('/'))
+
+    def test_false(self, rf):
+        actual = k_or(false(), false())
+        assert not actual(rf.get('/'))
+
+    def test_as_class(self, rf):
+        actual = k_or(true, false)
+        assert actual(rf.get('/'))
+
+    def test_multiple(self, rf):
+        actual = k_or(false, true, true(), false())
+        assert actual(rf.get('/'))
 
 
 class TestEveryone:
