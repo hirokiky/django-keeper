@@ -17,6 +17,7 @@ setup(
     license='MIT',
     description="Authorization library for Django, with ACL, not depends on models.",
     long_description=README,
+    long_description_content_type='text/markdown',
     test_suite="tests",
     packages=['keeper', 'keeper.templatetags'],
 )
