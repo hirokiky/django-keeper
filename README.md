@@ -267,7 +267,8 @@ Now `User.has_perm` method will consider permissions of django-keeper.
     * It depends on databases
     * Not way to handle global permissions, not just for a model
 * [django-rules](https://github.com/dfunckt/django-rules)
-
+    * Basiaclly, rules is used with Django's permissions, but keeper isn't (basiacally).
+    * rules doesn't support view decorators or mixins for it's "rules" system (for Django's permission, yes).
 ## FAQ
 
 * Can I filter models by using ACL?
