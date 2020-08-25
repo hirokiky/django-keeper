@@ -9,13 +9,13 @@ Authorization library for Django, not depends on models.
 
 Supported versions:
 
-* Python 3.6
 * Python 3.7
-* Django 1.10
-* Django 1.11
+* Python3.8
 * Django 2.0
 * Django 2.1
 * Django 2.2
+* Django 3.0
+* Django 3.1
 
 ## Install
 
