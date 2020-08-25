@@ -3,7 +3,9 @@
 Authorization library for Django, not depends on models.
 
 * Won't depend on models
-* Won't save assignments/permissions into datastores
+* Won't depend on datastores
+* Won't depend on Django's permission system
+* Won't depend on Django's User model
 
 Supported versions:
 
