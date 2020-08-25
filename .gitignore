@@ -90,3 +90,6 @@ ENV/
 
 # Django db
 db.sqlite3
+
+# Pycharm
+.idea/
