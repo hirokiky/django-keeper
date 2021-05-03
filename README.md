@@ -114,10 +114,10 @@ class Root:
 It's not necessary to put it in `models.py`,
 but easy to understand.
 
-And specify it.
+And specify it in settings.
 
 ```python
-KEEPER_GLOBAL_CONTEXT = myapp.models.Root'
+KEEPER_GLOBAL_CONTEXT = 'myapp.models.Root'
 ```
 
 Then you can use global permission in views.
