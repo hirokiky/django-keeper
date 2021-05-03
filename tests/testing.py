@@ -1,7 +1,5 @@
 from unittest.mock import Mock
 
-from django.test import RequestFactory
-
 
 dummy_user = Mock(
     is_authenticated=True,

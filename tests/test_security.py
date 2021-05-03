@@ -1,7 +1,5 @@
 import pytest
 
-from django.test import TestCase
-
 from keeper.security import (
     detect_permissions,
     Allow,

@@ -1,11 +1,7 @@
-import pytest
-
 from django.contrib.auth.models import AnonymousUser
-from django.test import TestCase
 
 from keeper.operators import operator, Everyone, Authenticated, IsUser, Staff
 from.testing import dummy_user, dummy_staff
-from typing import List
 
 
 @operator
@@ -50,6 +46,7 @@ class TestOperatorAnd:
     def test_not(self, rf):
         actual = ~false
         assert actual(rf.get('/'))
+
 
 class TestEveryone:
     def test_it(self, rf):
