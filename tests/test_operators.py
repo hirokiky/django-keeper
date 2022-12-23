@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AnonymousUser
 
 from keeper.operators import operator, Everyone, Authenticated, IsUser, Staff
-from.testing import dummy_user, dummy_staff
+from .testing import dummy_user, dummy_staff
 
 
 @operator

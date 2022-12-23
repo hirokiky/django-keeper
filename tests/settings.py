@@ -17,3 +17,4 @@ SECRET_KEY = "secret_key_for_testing"
 MIDDLEWARE_CLASSES = []
 
 ROOT_URLCONF = 'tests.urls'
+USE_TZ = True
