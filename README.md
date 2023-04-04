@@ -16,6 +16,7 @@ Supported versions:
 * Django 3.1
 * Django 3.2
 * Django 4.1
+* Django 4.2
 
 ## Install
 
