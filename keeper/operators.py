@@ -23,7 +23,7 @@ class Operator:
     def __invert__(self):
         class Inverted(Operator):
             def __call__(self_, request):
-                return ~self(request)
+                return not self(request)
         return Inverted()
 
 

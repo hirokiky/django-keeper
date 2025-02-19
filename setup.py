@@ -9,7 +9,7 @@ setup(
     name='django-keeper',
     version='0.4.1',
     install_requires=[
-        'Django>=2.2,<4.3',
+        'Django>=2.2,<5.2',
     ],
     author='Hiroki KIYOHARA',
     author_email='hirokiky@gmail.com',
