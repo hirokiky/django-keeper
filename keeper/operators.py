@@ -42,7 +42,7 @@ class Everyone(Operator):
 
 class Authenticated(Operator):
     def __call__(self, request):
-        return hasattr(request, 'user') and request.user.is_authenticated
+        return getattr(request, 'user', None) and request.user.is_authenticated
 
 
 class IsUser(Operator):

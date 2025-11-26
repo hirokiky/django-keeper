@@ -69,6 +69,11 @@ class TestAuthenticated:
         req.user = AnonymousUser()
         assert not Authenticated()(req)
 
+    def test_user_is_none(self, rf):
+        req = rf.get('/')
+        req.user = None
+        assert not Authenticated()(req)
+
 
 class TestIsUser:
     def test_it(self, rf):
